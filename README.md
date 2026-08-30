@@ -88,7 +88,39 @@ CRATE includes dedicated Overview, Records and Shelves navigation, responsive re
 
 ## Screenshots
 
-Screenshots of the final desktop and mobile application will be added to this repository as portfolio material.
+## Application Preview
+
+### Collection Overview
+
+![CRATE Collection Overview](screenshots/overview-desktop.png)
+
+The Overview provides a quick snapshot of the collection, including records, tracks, shelves, recently added items, track energy, genres and BPM ranges.
+
+### Records
+
+![CRATE Records](screenshots/records-desktop.png)
+
+The Records view provides collection search, filtering, ratings, shelf information, pagination and configurable page size.
+
+### Record Details & Track Metadata
+
+![CRATE Record Details](screenshots/record-details-desktop.png)
+
+Each record combines release-level information with individual track metadata. Tracks can have their own position, BPM, energy, rating and notes.
+
+### Shelves / Crates
+
+![CRATE Shelves](screenshots/shelves-desktop.png)
+
+Shelves represent the physical organization of the vinyl collection, allowing records to be mapped to real-world crates or storage locations.
+
+## Responsive Design
+
+CRATE was designed and refined for both desktop and mobile use.
+
+<img src="screenshots/record-details-mobile.png" alt="CRATE Record Details on mobile" width="390">
+
+The mobile interface reorganizes record information and track content for smaller screens while preserving the same collection structure and functionality.
 
 ## Status
 
