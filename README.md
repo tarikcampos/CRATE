@@ -6,11 +6,11 @@ It is designed around the way DJs physically organize and explore record collect
 
 The goal is not to automate DJ selection. CRATE helps users understand, organize and navigate their collection while leaving the creative process of choosing and combining records to the DJ.
 
-## Live Demo
-
-**CRATE:** https://personal-5npg68ma-dev.outsystems.app/CRATEVinylCollectionManager/Overview
-
-## Project Context
+      ## Live Demo
+      
+      **CRATE:** https://personal-5npg68ma-dev.outsystems.app/CRATEVinylCollectionManager/Overview
+      
+      ## Project Context
 
 CRATE was developed as the final application project for an OutSystems AI Developer learning path. The portfolio version is hosted in OutSystems ODC; this repository documents the product, architecture, development decisions and QA process rather than presenting CRATE as a conventional source-code repository.
 
