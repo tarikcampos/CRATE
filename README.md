@@ -1,10 +1,10 @@
-# CRATE — Vinyl Collection Manager
+# CRATE — Physical Music Collection Manager
 
-CRATE is a responsive vinyl collection manager for DJs, built with **OutSystems Developer Cloud (ODC)**.
+CRATE is a responsive physical music collection manager for DJs, built with **OutSystems Developer Cloud (ODC)**. The current portfolio version is focused on vinyl, while the product concept is designed to evolve toward multiple physical DJ media formats such as vinyl and CD.
 
-It is designed around the way DJs physically organize and explore record collections: records live inside Shelves/Crates, while musical metadata such as BPM, genre, energy and rating can be stored at **track level**.
+It is designed around the way DJs physically organize and explore their collections: releases live inside Shelves/Crates, while musical metadata such as BPM, genre, energy and rating can be stored at **track level**.
 
-The goal is not to automate DJ selection. CRATE helps users understand, organize and navigate their collection while leaving the creative process of choosing and combining records to the DJ.
+The goal is not to automate DJ selection. CRATE helps users understand, organize and navigate their collection while leaving the creative process of choosing and combining music to the DJ.
 
 CRATE was developed as the final application project for an OutSystems AI Developer learning path. The portfolio version is hosted in OutSystems ODC; this repository documents the product, architecture, development decisions and QA process rather than presenting CRATE as a conventional source-code repository.
 
@@ -38,16 +38,16 @@ The Assistant deliberately does **not** recommend what the DJ should play, build
 
 ## Data Model
 
-The project evolved from a record-only catalog into a more accurate model for DJ collections.
+The current vinyl-focused implementation evolved from a record-only catalog into a more accurate model for DJ collections. Its structure can later be generalized with an explicit media type while preserving the release/track and physical-storage relationships.
 
 ### Shelf
-Represents a physical shelf or crate used to organize records.
+Represents a physical shelf or crate used to organize media.
 
 ### Record
-Represents a physical vinyl release. It contains release-level information such as artist, title, cover artwork, notes, physical position and shelf assignment.
+In the current version, represents a physical vinyl release. It contains release-level information such as artist, title, cover artwork, notes, physical position and shelf assignment.
 
 ### Track
-Represents an individual track belonging to a record. Track-specific musical information is stored here because one record can contain tracks with very different characteristics.
+Represents an individual track belonging to a physical release. Track-specific musical information is stored here because one release can contain tracks with very different characteristics.
 
 Key track attributes include Position (for example A1, A2, B1), Title, Genre, BPM, Energy, Rating and Notes.
 
@@ -56,13 +56,13 @@ A static track metadata classification: **Warm**, **Rolling** and **Peak**.
 
 ## Key Design Decision
 
-The initial model stored Genre, BPM and Energy at Record level. During development this was revised because a multi-track record may contain tracks with different genres, tempos and energy levels.
+The initial model stored Genre, BPM and Energy at Record level. During development this was revised because a multi-track release may contain tracks with different genres, tempos and energy levels.
 
 A dedicated **Track** entity was introduced and those attributes — together with Rating — became track-level metadata. This was one of the main data-modeling decisions in the project.
 
 ## Collection States
 
-Records can exist in three practical states:
+Records in the current vinyl implementation can exist in three practical states:
 
 - **Shelved** — assigned to a Shelf/Crate
 - **Recently Added** — not yet shelved and recently entered into the collection
@@ -122,7 +122,7 @@ Each record combines release-level information with individual track metadata. T
 
 ![CRATE Shelves](screenshots/shelves-desktop.png)
 
-Shelves represent the physical organization of the vinyl collection, allowing records to be mapped to real-world crates or storage locations.
+Shelves represent the physical organization of the collection, allowing releases to be mapped to real-world crates or storage locations.
 
 ### Collection Assistant
 
@@ -140,19 +140,20 @@ The mobile interface reorganizes record information and track content for smalle
 
 ## Status
 
-The current portfolio version is **feature-complete, published and functionally tested**. The Agentic AI extension includes real collection reads and a deliberately limited set of confirmed write operations rather than unrestricted autonomous access.
+The current vinyl-focused portfolio version is **feature-complete, published, submitted and functionally tested**. The Agentic AI extension includes real collection reads and a deliberately limited set of confirmed write operations rather than unrestricted autonomous access.
 
 ## Future Direction
 
-The next stage of CRATE is centered on **configurable agency** rather than simply giving the AI more control.
+The next stage of CRATE is centered on broader physical-media support and **configurable agency** rather than simply giving the AI more control.
 
 Planned directions include:
 
+- **Multi-format physical media support** — evolve the current vinyl-focused model with an explicit media type so CRATE can distinguish vinyl, CD and potentially other physical DJ formats while preserving the same release/track organization.
 - **Expanded collection automation** — additional user-requested operations such as controlled metadata updates and assistance with missing metadata.
 - **Agent Permissions & Preferences** — a dedicated control screen where the DJ can choose which operations the Agent may perform, which require confirmation and which remain disabled.
 - **Per-attribute AI preferences** — users could decide which metadata fields, such as Genre, BPM or Energy, may receive AI suggestions and whether those suggestions can ever be applied after confirmation.
-- **AI-assisted record ingestion** — artwork/photo recognition and external metadata services could prepare Record/Track drafts for user review before saving.
-- **Contextual Assistant UI** — evolve the current dedicated Assistant page into a global pop-up/panel available while browsing Records, Shelves and Record Details.
+- **AI-assisted media ingestion** — artwork/photo recognition and external metadata services could prepare release/track drafts for user review before saving.
+- **Contextual Assistant UI** — evolve the current dedicated Assistant page into a global pop-up/panel available while browsing the collection.
 - Discogs or similar metadata integration
 - Printable sleeve labels based on track positions
 - Richer collection statistics and charts
