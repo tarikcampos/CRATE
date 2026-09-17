@@ -2,13 +2,13 @@
 
 ## 1. Overview
 
-CRATE is a responsive vinyl collection management application for DJs, built in OutSystems Developer Cloud (ODC). Its purpose is to organize a physical record collection while preserving the DJ's own creative selection process.
+CRATE is a responsive physical music collection management application for DJs, built in OutSystems Developer Cloud (ODC). The current portfolio implementation focuses on vinyl, while the product concept can evolve to support multiple physical DJ media formats such as vinyl and CD.
 
-The application models both physical organization — Shelves/Crates and record position — and musical information at track level. The portfolio version also includes an Agentic AI Collection Assistant for natural-language collection access and constrained, user-confirmed automation.
+Its purpose is to organize a physical music collection while preserving the DJ's own creative selection process. The application models both physical organization — Shelves/Crates and media position — and musical information at track level. The portfolio version also includes an Agentic AI Collection Assistant for natural-language collection access and constrained, user-confirmed automation.
 
 ## 2. Functional Scope
 
-The completed portfolio version provides:
+The completed portfolio version is vinyl-focused and provides:
 
 - Record CRUD
 - Track CRUD within records
@@ -29,6 +29,8 @@ The completed portfolio version provides:
 
 ## 3. Domain Model
 
+The current domain uses `Record` for vinyl releases. A future multi-format version can generalize this concept through an explicit media type while retaining the release/track and physical-storage relationships.
+
 ### Shelf
 
 Represents a physical shelf or crate.
@@ -38,11 +40,11 @@ Main data:
 - Description
 - User ownership
 
-A Shelf can contain multiple Records.
+A Shelf can contain multiple Records in the current implementation.
 
 ### Record
 
-Represents a physical vinyl release.
+Represents a physical vinyl release in the current version.
 
 Main data:
 - Artist
@@ -61,7 +63,7 @@ Record-level Energy remains as a legacy model attribute but is not used as the m
 
 ### Track
 
-Represents an individual track belonging to a Record.
+Represents an individual track belonging to a physical release.
 
 Main data:
 - Position — required text, e.g. A1, A2, B1
@@ -71,7 +73,7 @@ Main data:
 - Energy — optional reference to Energy
 - Rating — optional, 1–5
 - Notes — optional
-- RecordId — required
+- RecordId — required in the current model
 
 Track is the source of truth for track-specific musical metadata.
 
@@ -86,11 +88,15 @@ In the interface these are visually distinguished with green, yellow and red tre
 
 ## 4. Relationships
 
+In the current vinyl implementation:
+
 - One Shelf can contain many Records.
 - A Record may belong to zero or one Shelf.
 - One Record can contain many Tracks.
 - Every Track belongs to one Record.
 - A Track may reference one Energy value.
+
+These relationships provide a natural basis for a future generalized physical-release model supporting multiple media types.
 
 ## 5. Collection-State Rules
 
@@ -235,13 +241,17 @@ https://personal-5npg68ma-dev.outsystems.app/CRATEVinylCollectionManager/Overvie
 
 ## 12. Known Scope Boundaries
 
+The current implementation is vinyl-focused. CD and other physical media are product directions rather than capabilities claimed for the submitted version.
+
 CRATE intentionally does not recommend which records or tracks a DJ should play, build sets/playlists, automate track order, choose transitions or make other artistic DJ decisions.
 
 The current Agent also does not yet provide general-purpose metadata mutation/enrichment. Expanded automation is intentionally treated as future work so it can be introduced with explicit user permissions rather than by simply increasing autonomous access.
 
-## 13. Future Agent Direction
+## 13. Future Direction
 
-Future development is centered on **configurable agency**.
+Future development is centered on **multi-format physical media management** and **configurable agency**.
+
+A future media model can introduce an explicit type for formats such as Vinyl and CD, allowing the same collection architecture to distinguish different physical releases without abandoning the current Shelf/Track concepts.
 
 A proposed **Agent Permissions & Preferences** screen would allow the DJ to choose:
 
@@ -251,8 +261,8 @@ A proposed **Agent Permissions & Preferences** screen would allow the DJ to choo
 - whether suggested metadata may be applied after confirmation;
 - which capabilities should never be available to the Agent.
 
-Potential future capabilities include controlled missing-metadata completion, metadata enrichment, artwork/photo-assisted release identification and external metadata lookup. A future ingestion workflow could prepare Record/Track drafts for review rather than silently creating collection data.
+Potential future capabilities include controlled missing-metadata completion, metadata enrichment, artwork/photo-assisted release identification and external metadata lookup. A future ingestion workflow could prepare release/track drafts for review rather than silently creating collection data.
 
-The current dedicated Collection Assistant page could also evolve into a global contextual pop-up/panel available while browsing Records, Shelves and Record Details, allowing the Agent to assist without forcing the user to leave the current collection context.
+The current dedicated Collection Assistant page could also evolve into a global contextual pop-up/panel available while browsing the collection, allowing the Agent to assist without forcing the user to leave the current context.
 
 These extensions retain the project's central boundary: **administrative and metadata assistance can become more capable; artistic DJ decisions remain with the DJ.**
