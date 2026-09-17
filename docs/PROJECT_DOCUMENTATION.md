@@ -4,7 +4,7 @@
 
 CRATE is a responsive vinyl collection management application for DJs, built in OutSystems Developer Cloud (ODC). Its purpose is to organize a physical record collection while preserving the DJ's own creative selection process.
 
-The application models both physical organization — Shelves/Crates and record position — and musical information at track level.
+The application models both physical organization — Shelves/Crates and record position — and musical information at track level. The portfolio version also includes an Agentic AI Collection Assistant for natural-language collection access and constrained, user-confirmed automation.
 
 ## 2. Functional Scope
 
@@ -22,6 +22,10 @@ The completed portfolio version provides:
 - Physical crate navigation
 - Collection Overview/dashboard
 - Responsive desktop and mobile layouts
+- Agentic AI natural-language collection queries
+- Agent-assisted Shelf creation
+- Agent-assisted Record movement between Shelves
+- Explicit confirmation before Agent write operations
 
 ## 3. Domain Model
 
@@ -32,6 +36,7 @@ Represents a physical shelf or crate.
 Main data:
 - Name
 - Description
+- User ownership
 
 A Shelf can contain multiple Records.
 
@@ -52,7 +57,7 @@ Main data:
 - CoverImage
 - DateAdded
 
-Record-level Energy remains as a legacy model attribute but is not used as the musical source of truth in the final UI.
+Record-level Energy remains as a legacy model attribute but is not used as the musical source of truth and is not exposed by the Assistant's record-listing payloads.
 
 ### Track
 
@@ -143,13 +148,55 @@ Shows only records assigned to the selected Shelf/Crate.
 
 Maintains track Position, Title, Genre, BPM, Energy, Rating and Notes.
 
-## 7. Search, Filtering and Pagination
+### Collection Assistant
+
+Provides a conversational interface to collection data. The current Agent can perform real collection reads and a deliberately constrained set of write operations. It can create a Shelf and move a Record to a Shelf after resolving the required data and receiving explicit user confirmation.
+
+## 7. Agentic AI Architecture
+
+The Collection Assistant is implemented as a separate ODC Agentic App connected to the CRATE Web App through public Service Actions.
+
+The architecture separates responsibilities:
+
+- **Web App Server Actions** contain collection/business logic.
+- **Service Actions** expose only selected operations across assets.
+- **Agentic App local actions** act as adapters for Agent Action Calling.
+- **Agent Flow** prepares context/messages, invokes the configured AI model, supports tool/action execution, stores conversational memory and returns the response to the Web App.
+- **SessionId** maintains conversational continuity without making previous model output the source of truth for current collection state.
+
+Current collection capabilities include read actions for unsorted records, records by shelf, tracks by BPM range, tracks by Energy, tracks with missing metadata and collection statistics, plus record/shelf lookup actions used to safely resolve identifiers for writes.
+
+### Constrained Write Protocol
+
+Write operations follow a human-in-the-loop protocol:
+
+1. Resolve the target Record/Shelf using collection actions rather than inventing internal IDs.
+2. Describe the exact proposed operation.
+3. Ask for explicit confirmation.
+4. Stop and wait for the user's next message.
+5. Execute only after a clear confirmation.
+6. Treat a revised request as a new operation requiring a new confirmation cycle.
+
+The current write surface intentionally remains small: Shelf creation and Record movement. This demonstrates controlled agency without granting unrestricted mutation of the collection.
+
+### Data Exposure and Serialization
+
+During QA, record-listing actions were found to serialize complete ODC entity/aggregate records, unintentionally exposing legacy fields such as Record-level BPM, Energy and Rating to the model.
+
+The final implementation uses dedicated projection structures before JSON serialization:
+
+- `AssistantShelfRecordOutput`: Artist, Release, Genre, ShelfName
+- `AssistantUnsortedRecordOutput`: Artist, Release, Genre, DateAdded
+
+The Agent therefore receives only the fields required by those operations. Track-specific actions continue to use Track metadata, including `Track.Energy`, normally.
+
+## 8. Search, Filtering and Pagination
 
 The Records experience supports text search, collection-state filters and configurable page size. Pagination was functionally and visually verified in the final QA pass on desktop and mobile.
 
 The final filter/page-size implementation uses explicit link-based controls so active state can be controlled reliably.
 
-## 8. Responsive Design
+## 9. Responsive Design
 
 The application was refined for desktop and mobile use. Important responsive work included:
 
@@ -160,25 +207,52 @@ The application was refined for desktop and mobile use. Important responsive wor
 - Table containment to prevent horizontal viewport overflow
 - Single-line desktop page-size controls
 - Responsive Overview content
+- Responsive Collection Assistant conversation/composer layout
 
-## 9. QA and Technical State
+## 10. QA and Technical State
 
 The final application was published and functionally tested without application errors.
 
-Two cleanup issues found during QA were fixed:
-- an unused Records action was removed;
-- an orphaned Aggregate On After Fetch handler was removed.
+Agentic QA included:
+- natural-language collection statistics and filtering queries;
+- record and shelf identifier resolution;
+- explicit write confirmation behavior;
+- Shelf creation;
+- Record movement with post-update verification;
+- persisted movement confirmed through both Assistant reads and the Shelf UI;
+- refusal to make artistic DJ/set-selection decisions;
+- validation that record-listing payloads no longer expose legacy Record-level Energy/BPM/Rating.
 
-The remaining development warnings are non-blocking missing-icon warnings originating from Phosphor 2.0/template UI elements. They were deliberately left outside the submission scope because they do not block publication or the tested application flows, and replacing global/template icon dependencies immediately before submission would add unnecessary regression risk.
+The trial AI model/provider used by the portfolio environment showed intermittent connection failures during runtime QA. The same operations could succeed on subsequent attempts without application changes, while persisted writes were independently verified through application state. This is documented as an environment/runtime limitation rather than hidden as an application feature.
 
-## 10. Deployment
+The remaining 17 development warnings are non-blocking missing-icon/template warnings. They were deliberately left outside the submission scope because they do not block publication or the tested application flows, and replacing global/template icon dependencies immediately before submission would add unnecessary regression risk.
+
+## 11. Deployment
 
 Live application:
 
-https://personal-wpsz0rzh-dev.outsystems.app/CRATEVinylCollectionManager/Overview
+https://personal-5npg68ma-dev.outsystems.app/CRATEVinylCollectionManager/Overview
 
-## 11. Known Scope Boundaries
+## 12. Known Scope Boundaries
 
-CRATE intentionally does not recommend which records or tracks a DJ should play or automate artistic track selection. Its role is collection organization, navigation and metadata management.
+CRATE intentionally does not recommend which records or tracks a DJ should play, build sets/playlists, automate track order, choose transitions or make other artistic DJ decisions.
 
-Potential future work is documented as post-submission scope rather than part of the completed portfolio version.
+The current Agent also does not yet provide general-purpose metadata mutation/enrichment. Expanded automation is intentionally treated as future work so it can be introduced with explicit user permissions rather than by simply increasing autonomous access.
+
+## 13. Future Agent Direction
+
+Future development is centered on **configurable agency**.
+
+A proposed **Agent Permissions & Preferences** screen would allow the DJ to choose:
+
+- which Agent operations are enabled or disabled;
+- which write operations always require confirmation;
+- which metadata attributes may receive AI suggestions;
+- whether suggested metadata may be applied after confirmation;
+- which capabilities should never be available to the Agent.
+
+Potential future capabilities include controlled missing-metadata completion, metadata enrichment, artwork/photo-assisted release identification and external metadata lookup. A future ingestion workflow could prepare Record/Track drafts for review rather than silently creating collection data.
+
+The current dedicated Collection Assistant page could also evolve into a global contextual pop-up/panel available while browsing Records, Shelves and Record Details, allowing the Agent to assist without forcing the user to leave the current collection context.
+
+These extensions retain the project's central boundary: **administrative and metadata assistance can become more capable; artistic DJ decisions remain with the DJ.**
